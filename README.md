@@ -14,6 +14,7 @@ This project makes use of the following technologies:
 - **Netflix hystrix** to provide failsafe architecture with fallbacks
 - **Spring Configuration** to easily switch between local and cloud deployments
 - **Kubeflix Ribbon Discovery** to provide service discovery and load balancer in a Kubernetes ClusterFirst
+- **Protocol Buffer** to define message structure for communicating with the micro-services
 - **Docker** to containerize each micro-service
 - **Kubernetes** to deploy and scale the Docker images
 
