@@ -316,3 +316,9 @@ kubectl describe svc edge-service --namespace cesar | grep Ingress
 ```
 
 it will give you the public address to your edge service. You can now repeat step 1 by replacing `localhost:9999` with your public enpoint!
+
+## TODOS
+
+- Add javadoc and comments in the code
+- Add comment to maven.xml to explain each import
+- Add unit tests for service and controller
