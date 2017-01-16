@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      ribbon:
+        enabled: true
+
+friend-service:
+    ribbon:
+        NIWSServerListClassName: io.fabric8.kubeflix.ribbon.KubernetesServerList
+        KubernetesNamespace: ${k8sNAMESPACE}
+        PortName: tcp80

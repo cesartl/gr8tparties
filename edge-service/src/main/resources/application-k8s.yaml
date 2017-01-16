@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      ribbon:
+        enabled: true
+
+zuul:
+    routes:
+        friend-service:
+            path: /friend-service/**
+            retryable: true
+            service-id: friend-service
+        party-service:
+            path: /party-service/**
+            retryable: true
+            service-id: party-service
+
+friend-service:
+    ribbon:
+        NIWSServerListClassName: io.fabric8.kubeflix.ribbon.KubernetesServerList
+        KubernetesNamespace: ${k8sNAMESPACE}
+        PortName: tcp80
+
+party-service:
+    ribbon:
+        NIWSServerListClassName: io.fabric8.kubeflix.ribbon.KubernetesServerList
+        KubernetesNamespace: ${k8sNAMESPACE}
+        PortName: tcp80

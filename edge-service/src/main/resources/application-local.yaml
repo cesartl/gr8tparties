@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: false
+      ribbon:
+        enabled: false
+zuul:
+    routes:
+        friend-service:
+            path: /friend-service/**
+            retryable: true
+            url: http://localhost:8080
+        party-service:
+            path: /party-service/**
+            retryable: true
+            url: http://localhost:8081

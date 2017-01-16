@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: false
+      ribbon:
+        enabled: false
+
+friend-service:
+  ribbon:
+    listOfServers: localhost:8080
+    eureka: false

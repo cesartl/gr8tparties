@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: friend-service
+  name: friend-service
+  namespace: cesar #change to the appropriate env here
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: friend-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: friend-service
+    spec:
+      containers:
+      - image: cesartl/friend-service:latest #change to your image here
+        imagePullPolicy: Always
+        name: friend-service
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        env:
+          - name: PROFILES
+            value: "k8s"
+          - name: k8sNAMESPACE
+            value: "cesar" #change to the appropriate env here
+        volumeMounts:
+          - mountPath: /logs
+            name: log-volume
+      volumes:
+      - name: log-volume
+        emptyDir:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: friend-service
+  namespace: cesar #change to the appropriate env here
+spec:
+  ports:
+  - port: 80 # the port that this service should serve on
+    # the container on each pod to connect to, can be a name
+    # (e.g. 'www') or a number (e.g. 80)
+    targetPort: 8080
+    protocol: TCP
+    name: tcp80
+  # just like the selector in the deployment,
+  # but this time it identifies the set of pods to load balance
+  # traffic to.
+  type: ClusterIP
+  selector:
+    app: friend-service
