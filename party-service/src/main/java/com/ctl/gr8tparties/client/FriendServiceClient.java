@@ -1,7 +1,7 @@
 package com.ctl.gr8tparties.client;
 
 import com.ctl.gr8tparties.FriendDto;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

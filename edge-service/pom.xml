@@ -5,7 +5,7 @@
 
     <groupId>com.ctl.gr8tparties</groupId>
     <artifactId>edge-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2.0.1.RELEASE</version>
     <packaging>jar</packaging>
 
     <name>edge-service</name>
@@ -14,35 +14,25 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
+        <version>2.0.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <spring-cloud-kubernetes.version>0.1.1</spring-cloud-kubernetes.version>
-        <docker-maven-plugin.version>0.14.2</docker-maven-plugin.version>
-        <docker.from>frolvlad/alpine-oraclejdk8:slim</docker.from>
-        <docker.image>${project.artifactId}:${project.version}</docker.image>
-        <docker.port.container.http>8080</docker.port.container.http>
+        <java.version>1.10</java.version>
+        <spring-cloud-kubernetes.version>0.1.6</spring-cloud-kubernetes.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-hystrix</artifactId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zuul</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.fabric8.kubeflix</groupId>
-            <artifactId>ribbon-discovery</artifactId>
-            <version>1.0.17</version>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -55,12 +45,6 @@
             <version>${spring-cloud-kubernetes.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-client</artifactId>
-            <version>1.4.14</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -72,7 +56,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR4</version>
+                <version>Finchley.RC1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -85,47 +69,17 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <configuration>
-                    <images>
-                        <image>
-                            <name>${docker.image}</name>
-                            <build>
-                                <from>${docker.from}</from>
-                                <assembly>
-                                    <basedir>/app</basedir>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
-                                <ports>
-                                    <port>${docker.port.container.http}</port>
-                                </ports>
-                                <entryPoint>
-                                    <exec>
-                                        <arg>java</arg>
-                                        <arg>-Xmx100m</arg>
-                                        <arg>-Djava.security.egd=file:/dev/./urandom</arg>
-                                        <arg>-jar</arg>
-                                        <arg>/app/${project.build.finalName}.jar</arg>
-                                    </exec>
-                                </entryPoint>
-                            </build>
-                        </image>
-                    </images>
-                </configuration>
-            </plugin>
+
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${docker-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
-
-
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

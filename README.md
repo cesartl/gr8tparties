@@ -26,12 +26,18 @@ Best parties are attended by friends and that's what this application aims to do
 - **friend-service:** This service is responsible for creating users and managing friendships
 - **party-service:** This service allows you to create parties and see if your friends are attending a given party (by talking to the friend-service)  
 
-## How to use?
+## Pre-requisite
+
+### Java
+
+This project require Java 10 to build - that's a good excuse to upgrade ;)
 
 ### Pre-requisite: Install your Kubernetes Cluster
 If you don't have a running Kubernetes (k8s) cluster, you can install one by following the [Kubernetes documentation](https://kubernetes.io/docs/getting-started-guides/).
 
 If you have an AWS account do use [kops](https://github.com/kubernetes/kops) it rocks!
+
+## How to use?
 
 ### Step 1: Run locally
 
@@ -244,22 +250,24 @@ Accept: application/json
 
 ### Step 2: Build with Docker
 
-Each project uses the Fabric8 `docker-to-maven` plugin that easily creates docker images for you:
+Each project has a `Dockerfile` which will build a Docker image. The `docker-build.sh` script will build the project using Maven and then run the `docker build` command.
 
 ```Shell
 cd friend-service
-mvn clean package docker:build
+./docker-build.sh
 ```
 
 ```Shell
 cd party-service
-mvn clean package docker:build
+./docker-build.sh
 ```
 
 ```Shell
 cd edge-service
-mvn clean package docker:build
+./docker-build.sh
 ```
+
+The `Dockerfile`s use Jlink to create a small JDK that can be used at runtime.
 
 If you want you can run all docker images locally by exposing the same ports as Step 1.
 
@@ -278,36 +286,24 @@ First login to Docker
 docker login
 ```
 
-Then tag and push your 3 images
-
-```Shell
-cd friend-service
-docker tag friend-service:0.0.1-SNAPSHOT "${DOCKER_USERNAME}/friend-service:latest"
-docker push "${DOCKER_USERNAME}/friend-service:latest"
+In `push-all.sh` change this line to point to your Docker repo:
+```shell
+REPO="cesartl"
 ```
 
-```Shell
-cd party-service
-docker tag party-service:0.0.1-SNAPSHOT "${DOCKER_USERNAME}/party-service:latest"
-docker push "${DOCKER_USERNAME}/party-service:latest"
-```
+Then simply run `push-all.sh`
 
-```Shell
-cd edge-service
-docker tag party-edge-service:0.0.1-SNAPSHOT "${DOCKER_USERNAME}/party-edge-service:latest"
-docker push "${DOCKER_USERNAME}/party-edge-service:latest"
-```
+At this point you have 3 Docker images in your Docker repository which are ready to be used by Kubernetes.
 
 ### Step 4: Deploy to K8s
 
-Edit the 3 k8s config files in the k8s folder with your Docker username and k8s namespace (you can use default namespace if you want)
+In `deploy-k8s.sh` change the following line to point to your k8s namespace:
 
 ```Shell
-cd k8s
-kubectl -f edge-service.yaml
-kubectl -f friend-service.yaml
-kubectl -f party-service.yaml
+NAMESPACE="cesar"
 ```
+Then run `deploy-k8s.sh`
+
 
 The edge service is configured to have an external load balancer. The effect will depend on your cloud provider. For AWS it will create an ELB endpoint. Give it a few minutes to get ready and then run;
 
@@ -315,7 +311,7 @@ The edge service is configured to have an external load balancer. The effect wil
 kubectl describe svc edge-service --namespace cesar | grep Ingress
 ```
 
-it will give you the public address to your edge service. You can now repeat step 1 by replacing `localhost:9999` with your public enpoint!
+it will give you the public address to your edge service. You can now repeat step 1 by replacing `localhost:9999` with your public endpoint!
 
 ## TODOS
 

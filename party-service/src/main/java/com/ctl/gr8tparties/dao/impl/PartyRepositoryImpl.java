@@ -2,7 +2,7 @@ package com.ctl.gr8tparties.dao.impl;
 
 import com.ctl.gr8tparties.dao.PartyRepository;
 import com.ctl.gr8tparties.model.Party;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

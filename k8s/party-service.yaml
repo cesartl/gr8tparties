@@ -1,10 +1,14 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: party-service
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
     app: party-service
   name: party-service
-  namespace: cesar #change to the appropriate env here
 spec:
   replicas: 1
   selector:
@@ -17,23 +21,23 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: party-service
     spec:
+      serviceAccountName: party-service
       containers:
-      - image: cesartl/party-service:latest #change to your image here
+      - image: cesartl/party-service:jdk10 #change to your image here
         imagePullPolicy: Always
         name: party-service
         readinessProbe:
           httpGet:
-            path: /health
+            path: /actuator/health
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 5
         livenessProbe:
           httpGet:
-            path: /health
+            path: /actuator/health
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 5
@@ -45,7 +49,9 @@ spec:
           - name: PROFILES
             value: "k8s"
           - name: k8sNAMESPACE
-            value: "cesar" #change to the appropriate env here
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
         volumeMounts:
           - mountPath: /logs
             name: log-volume
@@ -61,7 +67,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: party-service
-  namespace: cesar #change to the appropriate env here
 spec:
   ports:
   - port: 80 # the port that this service should serve on
