@@ -318,3 +318,4 @@ it will give you the public address to your edge service. You can now repeat ste
 - Add javadoc and comments in the code
 - Add comment to maven.xml to explain each import
 - Add unit tests for service and controller
+- Replace Spring Cloud gateway and get reactive!
