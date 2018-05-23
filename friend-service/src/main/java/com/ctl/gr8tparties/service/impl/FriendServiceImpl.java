@@ -39,23 +39,25 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Optional<User> findUser(String id) {
-        return userRepository.getById(id);
+    public Optional<User> findUser(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
     public void befriend(String userLeftId, String userRightId) {
-        final User userLeft = userRepository.getById(userLeftId).orElseThrow(() -> NotFoundException.userNotFound(userLeftId));
-        final User userRight = userRepository.getById(userRightId).orElseThrow(() -> NotFoundException.userNotFound(userRightId));
-        final Friendship friendship = new Friendship(userLeft.getId(), userRight.getId());
-        friendshipRepository.save(friendship);
+        final User userLeft = userRepository.findByUsername(userLeftId).orElseThrow(() -> NotFoundException.userNotFound(userLeftId));
+        final User userRight = userRepository.findByUsername(userRightId).orElseThrow(() -> NotFoundException.userNotFound(userRightId));
+        if (!friendshipRepository.findFriendship(userLeftId, userRightId).isPresent()) {
+            final Friendship friendship = new Friendship(userLeft.getUsername(), userRight.getUsername());
+            friendshipRepository.save(friendship);
+        }
     }
 
     @Override
-    public List<User> friendsOf(String userId) {
-        return friendshipRepository.friendsOf(userId)
+    public List<User> friendsOf(String username) {
+        return friendshipRepository.friendsOf(username)
                 .stream()
-                .map(f -> f.getUserLeft().equals(userId) ? f.getUserRight() : f.getUserLeft())
+                .map(f -> f.getUserLeft().equals(username) ? f.getUserRight() : f.getUserLeft())
                 .map(this::findUser)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

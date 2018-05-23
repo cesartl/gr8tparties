@@ -14,10 +14,10 @@ public interface FriendService {
 
     User createUser(User user);
 
-    Optional<User> findUser(String id);
+    Optional<User> findUser(String username);
 
     void befriend(String userLeft, String userRight);
 
-    List<User> friendsOf(String userId);
+    List<User> friendsOf(String username);
 
 }

@@ -39,12 +39,12 @@ public class FriendRestController {
         return ResponseEntity.ok(listDto);
     }
 
-    @GetMapping(path = "/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String userId) {
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String username) {
         final UserDto userDto = friendService
-                .findUser(userId)
+                .findUser(username)
                 .map(UserFactory::toDto)
-                .orElseThrow(() -> NotFoundException.userNotFound(userId));
+                .orElseThrow(() -> NotFoundException.userNotFound(username));
         return ResponseEntity.ok(userDto);
     }
 
@@ -61,9 +61,9 @@ public class FriendRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "/friendsOf/{userId}")
-    public ResponseEntity<UserListDto> friendsOf(@PathVariable String userId) {
-        final List<UserDto> friends = friendService.friendsOf(userId)
+    @GetMapping(path = "/friendsOf/{username}")
+    public ResponseEntity<UserListDto> friendsOf(@PathVariable String username) {
+        final List<UserDto> friends = friendService.friendsOf(username)
                 .stream()
                 .map(UserFactory::toDto)
                 .collect(Collectors.toList());

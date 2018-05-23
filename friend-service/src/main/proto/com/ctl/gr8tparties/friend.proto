@@ -5,8 +5,9 @@ option java_outer_classname = "FriendDto";
 
 message UserDto {
     optional string userId = 1;
-    optional string firstName = 2;
-    optional string lastName = 3;
+    optional string username = 2;
+    optional string firstName = 3;
+    optional string lastName = 4;
 }
 
 message UserListDto {
