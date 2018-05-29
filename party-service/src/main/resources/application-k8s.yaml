@@ -1,13 +1,28 @@
-spring:
-  cloud:
-    kubernetes:
-      discovery:
-        enabled: true
-      ribbon:
-        enabled: true
-
 friend-service:
     ribbon:
         NIWSServerListClassName: io.fabric8.kubeflix.ribbon.KubernetesServerList
         KubernetesNamespace: ${k8sNAMESPACE}
         PortName: tcp80
+
+mongo:
+  uri: ${MONGO_URI}
+  database: party-service
+
+
+ribbon:
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 0
+  ReadTimeout: ${RIBBON_TIMEOUT:500}
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: ${HYSTRIX_TIMEOUT:500}
+
+
+feign.hystrix.enabled: true
+management.endpoints.web.exposure.include: hystrix.stream,health

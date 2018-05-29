@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "friend-service", fallback = FriendServiceClientFallback.class)
 public interface FriendServiceClient {
 
-    @RequestMapping(method = RequestMethod.GET, path = "/friends/friendsOf/{userId}", headers = "accept=application/x-protobuf")
-    FriendDto.UserListDto friendsOf(@PathVariable(name = "userId") String userId);
+    @RequestMapping(method = RequestMethod.GET, path = "/friends/friendsOf/{username}", headers = "accept=application/x-protobuf")
+    FriendDto.UserListDto friendsOf(@PathVariable(name = "username") String username);
 }

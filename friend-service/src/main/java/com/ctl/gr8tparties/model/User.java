@@ -13,7 +13,7 @@ public class User {
     @Id
     private String id;
 
-    @Indexed
+    @Indexed(unique = true)
     private String username;
 
     public static User withUsername(String username){
@@ -49,4 +49,11 @@ public class User {
         this.lastName = lastName;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

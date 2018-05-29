@@ -1,11 +1,3 @@
-spring:
-  cloud:
-    kubernetes:
-      discovery:
-        enabled: true
-      ribbon:
-        enabled: true
-
 zuul:
     routes:
         friend-service:
@@ -28,3 +20,18 @@ party-service:
         NIWSServerListClassName: io.fabric8.kubeflix.ribbon.KubernetesServerList
         KubernetesNamespace: ${k8sNAMESPACE}
         PortName: tcp80
+
+
+ribbon:
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 0
+  ReadTimeout: ${RIBBON_TIMEOUT:2000}
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: ${HYSTRIX_TIMEOUT:2000}        

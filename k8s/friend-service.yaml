@@ -43,6 +43,10 @@ spec:
         env:
           - name: PROFILES
             value: "k8s"
+          - name: delay
+            value: "200"
+          - name: MONGO_URI
+            value: mongodb://mongodb:27017
           - name: k8sNAMESPACE
             valueFrom:
               fieldRef:

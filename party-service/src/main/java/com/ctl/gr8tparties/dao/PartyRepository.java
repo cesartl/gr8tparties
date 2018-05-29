@@ -12,5 +12,5 @@ import java.util.Optional;
  */
 public interface PartyRepository extends MongoRepository<Party, String> {
     @Query("{'guests' : ?0}")
-    List<Party> findPartyForUser(String userId);
+    List<Party> findPartyForUser(String username);
 }
