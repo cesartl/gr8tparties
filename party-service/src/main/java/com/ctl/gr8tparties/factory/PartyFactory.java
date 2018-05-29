@@ -20,7 +20,7 @@ public final class PartyFactory {
 
         party.getGuests()
                 .stream()
-                .map(userId -> UserDto.newBuilder().setUserId(userId).build())
+                .map(username -> UserDto.newBuilder().setUsername(username).build())
                 .forEach(builder::addInvited);
 
         return builder.build();

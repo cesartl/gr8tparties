@@ -6,7 +6,9 @@ import com.ctl.gr8tparties.factory.UserFactory;
 import com.ctl.gr8tparties.model.User;
 import com.ctl.gr8tparties.model.exception.NotFoundException;
 import com.ctl.gr8tparties.service.FriendService;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +24,14 @@ public class FriendRestController {
 
     private final FriendService friendService;
 
+    @Value("${delay:50}")
+    private long delayMillis;
+
     @Autowired
     public FriendRestController(FriendService friendService) {
         this.friendService = friendService;
     }
+
 
     @GetMapping(path = "")
     public ResponseEntity<UserListDto> getUsers() {
@@ -39,12 +45,12 @@ public class FriendRestController {
         return ResponseEntity.ok(listDto);
     }
 
-    @GetMapping(path = "/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String userId) {
+    @GetMapping(path = "/{username}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String username) {
         final UserDto userDto = friendService
-                .findUser(userId)
+                .findUser(username)
                 .map(UserFactory::toDto)
-                .orElseThrow(() -> NotFoundException.userNotFound(userId));
+                .orElseThrow(() -> NotFoundException.userNotFound(username));
         return ResponseEntity.ok(userDto);
     }
 
@@ -61,9 +67,12 @@ public class FriendRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "/friendsOf/{userId}")
-    public ResponseEntity<UserListDto> friendsOf(@PathVariable String userId) {
-        final List<UserDto> friends = friendService.friendsOf(userId)
+    @GetMapping(path = "/friendsOf/{username}")
+    public ResponseEntity<UserListDto> friendsOf(@PathVariable String username) throws InterruptedException {
+        final long delay = RandomUtils.nextLong(0, delayMillis);
+        System.out.println(String.format("Delay is: %d (max %d)", delay, delayMillis));
+        Thread.sleep(delay);
+        final List<UserDto> friends = friendService.friendsOf(username)
                 .stream()
                 .map(UserFactory::toDto)
                 .collect(Collectors.toList());

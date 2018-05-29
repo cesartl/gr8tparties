@@ -51,9 +51,10 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public List<PartyDto> findAllPartiesForUser(String id) {
-        final UserListDto friends = friendServiceClient.friendsOf(id);
-        return partyRepository.findPartyForUser(id)
+    public List<PartyDto> findAllPartiesForUser(String username) {
+        final UserListDto friends = friendServiceClient.friendsOf(username);
+        System.out.println(String.format("Found %d friends for %s", friends.getUsersList().size(), username));
+        return partyRepository.findPartyForUser(username)
                 .stream()
                 .map(PartyFactory::toDto)
                 .map(p -> this.mergeWithFriends(p, friends))
@@ -61,14 +62,14 @@ public class PartyServiceImpl implements PartyService {
     }
 
     private PartyDto mergeWithFriends(PartyDto partyDto, UserListDto friends) {
-        final Set<String> invitedIds = partyDto.getInvitedList()
+        final Set<String> invitedUsernames = partyDto.getInvitedList()
                 .stream()
-                .map(FriendDto.UserDto::getUserId)
+                .map(FriendDto.UserDto::getUsername)
                 .collect(Collectors.toSet());
         if (friends.getUsersList() != null) {
             final List<FriendDto.UserDto> invitedFriends = friends.getUsersList()
                     .stream()
-                    .filter(u -> invitedIds.contains(u.getUserId()))
+                    .filter(u -> invitedUsernames.contains(u.getUsername()))
                     .collect(Collectors.toList());
             return partyDto.toBuilder().addAllFriends(invitedFriends).build();
         } else {
@@ -77,9 +78,9 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public Party userJoinsParty(String partyId, String userId) {
+    public Party userJoinsParty(String partyId, String username) {
         final Party party = partyRepository.findById(partyId).orElseThrow(() -> NotFoundException.partyIdNotFound(partyId));
-        party.getGuests().add(userId);
+        party.getGuests().add(username);
         return partyRepository.save(party);
     }
 }

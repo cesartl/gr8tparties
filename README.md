@@ -66,185 +66,139 @@ mvn clean spring-boot:run -DPORT=9999
 Now the services have started you can hit the API using your favourite REST client (mine is POSTMAN!)
 
 create a few friends
-```HTTP
-POST /friend-service/friends/ HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
+
+```bash
+curl -d "@json/mark.json" -H "Content-Type: application/json" -H "Accept: application/json" -X POST localhost:9999/friend-service/friends
+```
+
+```json
 {
-  "firstName" : "Mark",
-  "lastName" : "Knopfler"
-}
----
-{
-  "userId": "0",
+  "id": "5b0d768008ad890007202e6f",
+  "username": "mark",
   "firstName": "Mark",
   "lastName": "Knopfler"
 }
 ```
 
-```HTTP
-POST /friend-service/friends/ HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
+```bash
+curl -d "@json/tracy.json" -H "Content-Type: application/json" -H "Accept: application/json" -X POST localhost:9999/friend-service/friends
+```
+
+```json
 {
-  "firstName" : "Jimmy",
-  "lastName" : "Page"
-}
----
-{
-  "userId": "1",
-  "firstName": "Jimmy",
-  "lastName": "Page"
+  "id": "5b0d768008ad890007202e70",
+  "username": "tracy",
+  "firstName": "Tracy",
+  "lastName": "Chapman"
 }
 ```
 
-```HTTP
-POST /friend-service/friends/ HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
+```bash
+curl -d "@json/eric.json" -H "Content-Type: application/json" -H "Accept: application/json" -X POST localhost:9999/friend-service/friends
+```
+
+```json
 {
-  "firstName" : "Eric",
-  "lastName" : "Clapton"
-}
----
-{
-  "userId": "2",
+  "id": "5b0d768008ad890007202e71",
+  "username": "eric",
   "firstName": "Eric",
   "lastName": "Clapton"
 }
 ```
 
-Then setup some friendships (user 0 and user 1, user 0 and user 2):
+Then setup some friendships (`mark` <-> `tracy` and `mark` <-> `eric`):
 
-```HTTP
-GET /friend-service/friends/befriend/0/1 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
-{
-  "firstName" : "Eric",
-  "lastName" : "Clapton"
-}
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/friend-service/friends/befriend/mark/tracy
 ```
 
-```HTTP
-GET /friend-service/friends/befriend/0/2 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
-{
-  "firstName" : "Eric",
-  "lastName" : "Clapton"
-}
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/friend-service/friends/befriend/mark/eric
 ```
 
 Now let's great a party:
 
-```HTTP
-POST /party-service/ HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
----
+```bash
+curl -H "Accept: application/json" -X POST localhost:9999/party-service/
+```
+
+```json
 {
-  "id": "0"
+  "id": "5b0d7937fc938500072fb3a5"
 }
 ```
 
 Let's everyone attend
 
-```HTTP
-GET /party-service/attend/0/0 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
----
-{
-  "id": "0",
-  "invited": [
-    {
-      "userId": "0"
-    }
-  ]
-}
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/party-service/attend/5b0d7937fc938500072fb3a5/mark
 ```
 
-```HTTP
-GET /party-service/attend/0/1 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
----
-{
-  "id": "0",
-  "invited": [
-    {
-      "userId": "0"
-    },
-    {
-      "userId": "1"
-    }
-  ]
-}
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/party-service/attend/5b0d7937fc938500072fb3a5/tracy
 ```
 
-```HTTP
-GET /party-service/attend/0/2 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
----
-{
-  "id": "0",
-  "invited": [
-    {
-      "userId": "0"
-    },
-    {
-      "userId": "1"
-    },
-    {
-      "userId": "2"
-    }
-  ]
-}
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/party-service/attend/5b0d7937fc938500072fb3a5/eric
 ```
 
-Let's see if user 1 should go to this party?
+Let's see if user mark should go to this party?
 
-```HTTP
-GET /party-service/myParties/0 HTTP/1.1
-Host: localhost:9999
-Content-Type: application/json; charset=utf-8
-Accept: application/json
----
+```bash
+curl -H "Accept: application/json" -X GET localhost:9999/party-service/myParties/eric
+```
+
+```json
 {
-  "parties": [
-    {
-      "id": "0",
-      "invited": [
+    "parties": [
         {
-          "userId": "0"
-        },
-        {
-          "userId": "1"
-        },
-        {
-          "userId": "2"
+            "id": "5b0d7937fc938500072fb3a5",
+            "invited": [
+                {
+                    "username": "mark"
+                },
+                {
+                    "username": "tracy"
+                },
+                {
+                    "username": "eric"
+                }
+            ],
+            "friends": [
+                {
+                    "id": "5b0d768008ad890007202e6f",
+                    "username": "mark",
+                    "firstName": "Mark",
+                    "lastName": "Knopfler"
+                }
+            ]
         }
-      ],
-      "friends": [
+    ]
+}
+```
+
+If the friend service is not available or becomes too slow, the request gracefully fallbacks to a reduced answer.
+
+For example if you stop the `friend-service` process the response will be:
+
+```json
+{
+    "parties": [
         {
-          "userId": "1",
-          "firstName": "Jimmy",
-          "lastName": "Page"
+            "id": "5b0d7937fc938500072fb3a5",
+            "invited": [
+                {
+                    "username": "mark"
+                },
+                {
+                    "username": "tracy"
+                },
+                {
+                    "username": "eric"
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
@@ -317,5 +271,5 @@ it will give you the public address to your edge service. You can now repeat ste
 
 - Add javadoc and comments in the code
 - Add comment to maven.xml to explain each import
-- Add unit tests for service and controller
+- Add unit tests for controller
 - Replace Zuul with Spring Cloud gateway and get reactive!

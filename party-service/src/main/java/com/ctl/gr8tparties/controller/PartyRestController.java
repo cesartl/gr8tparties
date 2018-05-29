@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -39,18 +40,16 @@ public class PartyRestController {
         return ResponseEntity.ok(builder.build());
     }
 
-    @GetMapping(path = "/myParties/{userId}")
-    public ResponseEntity<PartyListDto> myParties(@PathVariable String userId) {
+    @GetMapping(path = "/myParties/{username}")
+    public ResponseEntity<PartyListDto> myParties(@PathVariable String username) {
         final PartyListDto.Builder builder = PartyListDto.newBuilder();
-        builder.addAllParties(partyService.findAllPartiesForUser(userId)
-                .stream()
-                .collect(Collectors.toList()));
+        builder.addAllParties(new ArrayList<>(partyService.findAllPartiesForUser(username)));
         return ResponseEntity.ok(builder.build());
     }
 
-    @GetMapping(path = "/attend/{partyId}/{userId}")
-    public ResponseEntity<PartyDto> attendParty(@PathVariable String partyId, @PathVariable String userId) {
-        final PartyDto partyDto = PartyFactory.toDto(partyService.userJoinsParty(partyId, userId));
+    @GetMapping(path = "/attend/{partyId}/{username}")
+    public ResponseEntity<PartyDto> attendParty(@PathVariable String partyId, @PathVariable String username) {
+        final PartyDto partyDto = PartyFactory.toDto(partyService.userJoinsParty(partyId, username));
 
         return ResponseEntity.ok(partyDto);
     }

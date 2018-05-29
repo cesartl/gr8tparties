@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Component
 public class FriendServiceClientFallback implements FriendServiceClient {
+
+
     @Override
     public FriendDto.UserListDto friendsOf(@PathVariable String userId) {
         return FriendDto.UserListDto.newBuilder().build();

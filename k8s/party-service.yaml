@@ -48,6 +48,12 @@ spec:
         env:
           - name: PROFILES
             value: "k8s"
+          - name: "HYSTRIX_TIMEOUT"
+            value: "300"
+          - name: "RIBBON_TIMEOUT"
+            value: "1500"
+          - name: MONGO_URI
+            value: mongodb://mongodb:27017
           - name: k8sNAMESPACE
             valueFrom:
               fieldRef:
